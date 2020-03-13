@@ -1,0 +1,73 @@
+ create table customer(cid varchar(10) primary key,customerName varchar(10),contactname varchar(10),country varchar(20));
+ 
+ create table order1(oid varchar(10) primary key,custid varchar(10),orderdate DATE,foreign key(custid) references customer(cid) on delete cascade on update cascade);
+ 
+  desc order1;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| oid       | varchar(10) | NO   | PRI | NULL    |       |
+| custid    | varchar(10) | YES  | MUL | NULL    |       |
+| orderdate | date        | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+
+> desc customer ;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| cid          | varchar(10) | NO   | PRI | NULL    |       |
+| customerName | varchar(10) | YES  |     | NULL    |       |
+| contactname  | varchar(10) | YES  |     | NULL    |       |
+| country      | varchar(20) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+ insert into customer values(1,"xyz","xyz","INDIA");
+ insert into customer values(2,"qwe","qwe","INDIA");
+  
+   insert into order1 values("O1",1,23-09-19);
+   insert into order1 values("O1",1,'23-09-19');
+   insert into order1 values("O3",2,'30-09-19');
+   insert into order1 values("O3",3,'1-10-19');
+   
+   insert into customer values(3,"abc","abc","INDIA");
+   
+    select * from order1 right join customer on order1.custid=customer.cid;
++------+--------+------------+-----+--------------+-------------+---------+
+| oid  | custid | orderdate  | cid | customerName | contactname | country |
++------+--------+------------+-----+--------------+-------------+---------+
+| O1   | 1      | 2023-09-19 | 1   | xyz          | xyz         | INDIA   |
+| O2   | 1      | 2024-09-19 | 1   | xyz          | xyz         | INDIA   |
+| O3   | 2      | 2030-09-19 | 2   | qwe          | qwe         | INDIA   |
+| O4   | 2      | 0001-10-19 | 2   | qwe          | qwe         | INDIA   |
+| NULL | NULL   | NULL       | 3   | abc          | abc         | INDIA   |
++------+--------+------------+-----+--------------+-------------+---------+
+
+ select * from order1 left  join customer on order1.custid=customer.cid;
++-----+--------+------------+------+--------------+-------------+---------+
+| oid | custid | orderdate  | cid  | customerName | contactname | country |
++-----+--------+------------+------+--------------+-------------+---------+
+| O1  | 1      | 2023-09-19 | 1    | xyz          | xyz         | INDIA   |
+| O2  | 1      | 2024-09-19 | 1    | xyz          | xyz         | INDIA   |
+| O3  | 2      | 2030-09-19 | 2    | qwe          | qwe         | INDIA   |
+| O4  | 2      | 0001-10-19 | 2    | qwe          | qwe         | INDIA   |
++-----+--------+------------+------+--------------+-------------+---------+
+
+ select * from order1   join customer on order1.custid=customer.cid;
++-----+--------+------------+-----+--------------+-------------+---------+
+| oid | custid | orderdate  | cid | customerName | contactname | country |
++-----+--------+------------+-----+--------------+-------------+---------+
+| O1  | 1      | 2023-09-19 | 1   | xyz          | xyz         | INDIA   |
+| O2  | 1      | 2024-09-19 | 1   | xyz          | xyz         | INDIA   |
+| O3  | 2      | 2030-09-19 | 2   | qwe          | qwe         | INDIA   |
+| O4  | 2      | 0001-10-19 | 2   | qwe          | qwe         | INDIA   |
++-----+--------+------------+-----+--------------+-------------+---------+
+
+select * from order1   join customer on order1.custid=customer.cid where custid=1 group by contactname;
++-----+--------+------------+-----+--------------+-------------+---------+
+| oid | custid | orderdate  | cid | customerName | contactname | country |
++-----+--------+------------+-----+--------------+-------------+---------+
+| O1  | 1      | 2023-09-19 | 1   | xyz          | xyz         | INDIA   |
++-----+--------+------------+-----+--------------+-------------+---------+
+1 row in set (0.03 sec)
+   
+     
