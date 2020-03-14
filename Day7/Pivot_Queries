@@ -1,0 +1,93 @@
+create table users(id varchar(20),name varchar(10),email varchar(20),salary int,primary key(id));
+create table accounts(id varchar(20),number varchar(10),amount int,userid varchar(20),primary key(id),foreign key(userid) references users(id) on delete cascade on update cascade);
+
+insert into users values("1","abc","abc@gmail.com",123456);
+insert into users values("2","def","def@gmail.com",123456);
+
+insert into accounts values(S1,123,12345,"1");
+insert into accounts values("L1",123,-12,"1");
+
+insert into accounts values("L2",1234,-123,"2");
+insert into accounts values("C2",1234,1235,"2");
+
+create table bank(userid varchar(20),accountid varchar(20),amount int);
+
+insert into bank values("1","S1",12345);
+insert into bank values("1","L1",-12);
+insert into bank values("2","C2",1235);
+insert into bank values("2","L2",-123);
+
+select * from bank;
++--------+-----------+--------+
+| userid | accountid | amount |
++--------+-----------+--------+
+| 1      | S1        |  12345 |
+| 1      | L1        |    -12 |
+| 2      | C2        |   1235 |
+| 2      | L2        |   -123 |
++--------+-----------+--------+
+         
+        mysql> show tables;
++--------------------+
+| Tables_in_exercise |
++--------------------+
+| accounts           |
+| bank               |
+| users              |
++--------------------+
+3 rows in set (0.06 sec)
+
+mysql> desc accounts;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| id     | varchar(20) | NO   | PRI | NULL    |       |
+| number | varchar(10) | YES  |     | NULL    |       |
+| amount | int         | YES  |     | NULL    |       |
+| userid | varchar(20) | YES  | MUL | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+4 rows in set (0.06 sec)
+
+mysql> desc bank;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| userid    | varchar(20) | YES  |     | NULL    |       |
+| accountid | varchar(20) | YES  |     | NULL    |       |
+| amount    | int         | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> desc users;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| id     | varchar(20) | NO   | PRI | NULL    |       |
+| name   | varchar(10) | YES  |     | NULL    |       |
+| email  | varchar(20) | YES  |     | NULL    |       |
+| salary | int         | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+ select u.name,b.amount,a.id from users u join bank b on b.userid=u.id join accounts a on a.id=b.accountid;
++------+--------+----+
+| name | amount | id |
++------+--------+----+
+| abc  |  12345 | S1 |
+| abc  |    -12 | L1 |
+| def  |   1235 | C2 |
+| def  |   -123 | L2 |
++------+--------+----+
+4 rows in set (0.00 sec)
+ select u.name,sum(case when a.id =concat('S',u.id) then b.amount else 0 end ) as Saving,sum(case when a.id = concat('C',u.id) then b.amount else 0 end ) as Current,sum(case when a.id =concat('L',u.id) then b.amount else 0 end ) as Loan from users u join  bank b on b.userid=u.id join accounts a on a.id=b.accountid group by u.name;
++------+--------+---------+------+
+| name | Saving | Current | Loan |
++------+--------+---------+------+
+| abc  |  12345 |       0 |  -12 |
+| def  |      0 |    1235 | -123 |
++------+--------+---------+------+
+2 rows in set (0.00 sec)
+
+
+     
+  
